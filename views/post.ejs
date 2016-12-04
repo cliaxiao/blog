@@ -1,0 +1,16 @@
+<% include header.ejs %>
+	<form method="post" class="" role="form">
+		<div class="form-group">
+			<label for='title' class="control-label">标题</label>
+			<input class="form-control" type='text' id='title' name='title' />
+		</div>	
+		<div class="form-group">
+			<label class="control-label" for='post'>正文</label>
+			<div class="summernote" name='post' id='post'></div>
+		</div>
+		<div class="form-actions">
+			<button type="submit" class="btn btn-primary">提交</button>
+		</div>
+	</form>
+
+<% include footer.ejs %>

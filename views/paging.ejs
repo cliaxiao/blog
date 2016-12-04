@@ -1,0 +1,16 @@
+<% if(pageNum) { %>
+	<nav class='page-center'>
+		<ul class="pagination"> 
+			<% if(pageNum != 1) { %>
+			<li><a href="?p=1">首页</a></li>
+			<% } %>
+			<% for(var i = 1; i <= pageNum; i++) { %>
+				<li><a href="?p=<%= i %>"><%= i %></a></li>
+			<% } %>
+			<% if(pageNum != 1) { %>
+			<li><a href="?p=<%= pageNum %>">尾页</a></li>
+			<% } %>
+
+		</ul>
+	</nav>
+<% } %>
