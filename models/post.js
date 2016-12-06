@@ -1,9 +1,10 @@
 var mongodb = require('./db');
 
-function Post(username, title, post) {
+function Post(username, title, post, comments) {
 	this.username = username;
 	this.title = title;
 	this.post = post;
+	this.comments = comments;
 }
 
 module.exports = Post;
@@ -64,7 +65,6 @@ Post.getAll = function(username, page, callback) {
 		}
 		//读取posts集合
 		db.collection('posts', function(err, collection) {
-			console.log(err)
 			if(err) {
 				mongodb.close();
 				return callback(err);
@@ -92,5 +92,94 @@ Post.getAll = function(username, page, callback) {
 
 		});
 
+	});
+};
+
+Post.getOne = function(username, day, title, callback) {
+	//打开数据库
+	mongodb.open(function(err, db) {
+		if(err) {
+			return callback(err);
+		}
+
+		//读取posts文章集合
+		db.collection('posts', function(err, collection) {
+			if(err) {
+				mongodb.close();
+				return callback(err);
+			}
+			//根据用户名，发表日期及文章名进行查询
+			collection.findOne({
+				'username': username,
+				'time.day': day,
+				'title': title,
+			}, function(err, doc) {
+				mongodb.close();
+				if(err) {
+					return callback(err);
+				}
+				callback(null, doc);//返回查询的一篇文章
+			});
+		});
+	});
+};
+//更新文章
+Post.update = function(username, day, title, post, callback) {
+	mongodb.open(function(err, db) {
+		if(err) {
+			return callback(err);
+		}
+		//读取posts集合
+		db.collection('posts', function(err, collection) {
+			if(err) {
+				mongodb.close();
+				return callback(err);
+			}
+			//更新
+			collection.update({
+				'username': username,
+				'time.day': day,
+				'title': title
+			}, {
+				$set: {post: post}
+			}, function(err) {
+				mongodb.close();
+				if(err) {
+					return callback(err);
+				}
+				callback(null);
+			});
+		});
+	});
+};
+
+//删除文章
+Post.remove = function(username, day, title, callback) {
+	//打开数据库
+	mongodb.open(function(err, db) {
+		if(err) {
+			return callback(err);
+		}
+		//读取posts集合
+		db.collection('posts', function(err, collection) {
+			if(err) {
+				mongodb.close();
+				return callback(err);
+			}
+			//根据用户名、时间和文章标题查找文章后，删除查找到的文章
+			collection.remove({
+				"username": username,
+				"time.day": day,
+				"title": title
+			}, {
+				w: 1
+			}, function(err) {
+				mongodb.close();
+				if(err) {
+					return callback(err);
+				}
+				callback(null);
+			});
+		});
 	});
 };

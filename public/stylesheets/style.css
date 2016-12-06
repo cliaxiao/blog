@@ -4,7 +4,7 @@ body {
 }
 
 a {
-  color: #00B7FF;
+  color: #000000;
 }
 
 .float-r {
@@ -14,3 +14,42 @@ a {
 .page-center {
 	text-align: center;
 }
+
+/*顶部导航样式  >只选择一代*/
+.nav-bgcolor {
+	background-color: #3CA0D0;
+}
+.navbar-default .navbar-nav > li > a{
+	color:#fff
+}
+
+.user-title {
+	color: #fff;
+	font-size: 1.2em;
+	margin-top: 0.7em;
+	display: inline-block;
+	text-align: right;
+}
+.navbar-padding {
+	padding: 0 5em 0 0;
+	margin-bottom: 2em;
+	font-size: 1.2em;
+}
+
+.more-link {
+	padding-left: 0.8em;
+}
+.footer-line {
+	width: 100%;
+	border-bottom: 1px solid rgba(51, 51, 51, 0.15); 
+	padding-bottom: 1em;
+}
+.footer-line > span{
+	padding-right: 1em;
+}
+
+/*post*/
+.post-padding-top {
+	padding-top: 2em;
+}
+

@@ -1,0 +1,22 @@
+<% include header.ejs %>
+	<article>
+        <header>
+            <h2>
+              <a href="u/<%= post.username %>/<%= post.time.day %>/<%= post.title %>"><%= post.title %></a>
+            <h2>
+        </header>
+        <div>
+            <p><%- post.post %></p>
+        </div>
+        <footer class='footer-line'>
+            <span>
+            日期：<time class="" datatime=<%= post.time.day %>><%= post.time.day %></time>
+            </span>
+           	<span>作者：<a href='u/<%= post.username %>'><%= post.username %></a></span>
+            <% if(user.username == post.username) { %>
+            <span><a href='/editArticle/<%= post.username %>/<%= post.time.day %>/<%= post.title %>'>编辑</a></span>
+            <span><a href='/remove/<%= post.username %>/<%= post.time.day %>/<%= post.title %>'>删除</a></span>
+            <% } %>
+         </footer>
+    </article>
+<% include footer.ejs %>

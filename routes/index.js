@@ -16,6 +16,7 @@ module.exports = function(app) {
   		if(err) {
   			posts = [];
   		}
+
   		res.render('index',
   		{ 
   			title: '主页',
@@ -24,11 +25,10 @@ module.exports = function(app) {
   			error: req.flash('error').toString(),
   			posts:  posts,
        // isFirstPage: (page - 1) == 0,
-        pageNum: (total % 10 == 0) ? (total / 10) : (total / 10 + 1),//计算一共有多少页（total是所有文章的总和）
+        pageNum: (total % 10 == 0) ? (total / 10) : (total / 10 + 1)//计算一共有多少页（total是所有文章的总和）
         //isLastPage: ((page - 1) * 10 + posts.length) == total,
   		});
   	});
-
   });
 
   /* login */
@@ -145,10 +145,104 @@ module.exports = function(app) {
   	    	res.redirect('/')
   	    });
   });
+  //单个文章页面
+  app.get('/u/:username/:day/:title', function(req, res) {
+    Post.getOne(req.params.username, req.params.day, req.params.title, function(err, post) {
+      if(err) {
+        req.flash('error', err);
+        return res.redirect('/');
 
+      }
+
+      res.render('aritcleList', {
+        title: req.params.title,
+        post: post,//单个文章
+        user: req.session.user,
+        success: req.flash('success').toString(),
+        error: req.flash('error').toString()
+      });
+    });
+  });
+
+  //用户文章页面
+  app.get('/u/:username', function(req, res) {
+    var page = req.query.p ? parseInt(req.query.p) : 1;
+    //检查用户是否存在
+    User.get(req.params.username, function(err, user) {
+      if(!user) {
+        req.flash('error', '用户不存在！');
+        return res.redirect('/');       
+      }
+
+      Post.getAll(user.uername, page, function(err, posts, total) {
+        if(err) {
+          req.flash('error', err);
+          return redirect('/');
+        }
+        res.render('userAritcle', {
+          title: user.username,
+          posts: posts,
+          user: req.session.user,
+          pageNum: (total % 10 == 0) ? (total / 10) : (total / 10 + 1),//计算一共有多少页（total是所有文章的总和）
+          success: req.flash('success').toString(),
+          error: req.flash('error').toString()
+        });
+      });
+    });
+  });
+  //编辑文章
+  app.get('/editArticle/:username/:day/:title', checkLogin);
+  app.get('/editArticle/:username/:day/:title', function(req, res) {
+    var curUser = req.session.user;
+    Post.getOne(curUser.username, req.params.day, req.params.title, function(err, post) {
+
+      if(err) {
+        req.flash('error', err);
+        return res.redirect('/');
+      }
+      res.render('editArticle', {
+        title: '编辑文章',
+        post: post,
+        user: req.session.user,
+        success: req.flash('success').toString(),
+        error: req.flash('error').toString()
+      });
+    });
+  });
+
+  app.post('/editArticle/:username/:day/:title', checkLogin);
+  app.post('/editArticle/:username/:day/:title', function(req, res) {
+         // console.log(post)
+      console.log(req.body.post)
+    var curUser = req.session.user;
+    Post.update(curUser.username, req.params.day, req.params.title, req.body.post, function(err) {
+      var url = encodeURI('/u/' + req.params.username + '/' + req.params.day + '/' + req.params.title);
+      console.log(url)
+      console.log(req.params.post)
+      if(err) {
+        req.flash('error', err);
+        return res.redirect(url);
+      }
+      req.flash('success', '修改成功');
+      res.redirect(url);
+    });
+  });
+
+  //删除文章
+  app.get('/remove/:username/:day/:title', checkLogin);
+  app.get('/remove/:username/:day/:title', function(req, res) {
+    var curUser = req.session.user;
+    Post.remove(curUser.username, req.params.day, req.params.title, function(err, post) {
+      if(err) {
+        req.flash('error', err);
+        return res.redirect('back');
+      }
+      req.flash('success', '删除成功');
+      res.redirect('/'); 
+    });
+  });
   //上传文件
   app.get('/upload', checkLogin);
-   console.log('21435')
   app.get('/upload', function(req, res) {
     res.render('upload', {
       title: '文件上传',

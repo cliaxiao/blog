@@ -9,6 +9,10 @@ $(document).ready(function() {
     	dialogsFade : true,//增加summernote上弹出窗口滑进滑出的动态效果。
     	dialogsInBody : true,//summernote的弹出框是否在body中
     });//初始化Summernote
+    var post = $('.summernote').summernote('code');
+    var post1 = $('.summernote').html();
+    console.log(post1)
+    console.log(post)
 
 
 });
